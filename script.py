@@ -3,53 +3,56 @@ from openpyxl.styles import Font
 
 def limpiar():
     datos = []
-    print("Ingresa el nombre del archivo: ",end="")
-    with open(input()) as archivo:
-        lineaAnterior = ""
-        for linea in archivo:
-            #Omite lineas vacias
-            datosL = []
-            datosLinea = linea.split(' ')
-            if lineaAnterior != datosLinea[0]:
-                if esNumero(linea[0:2]): #Vefificar que sea una linea valida
-                    contador = 0
-                    #Saca la IP
-                    datosL.append(datosLinea[contador])
-                    for dato in datosLinea:
-                        #Omite lineas vacias
-                        if dato != "-" or contador == 0:
-                            if contador == 3:
-                                #Saca la fecha
-                                datosL.append(dato[1:12])
-                                #Saca la hora
-                                datosL.append(f"{dato[13:15]}:00:00")
-                            if contador == 5: # Obtiene el metodo
-                                if dato != "\"-\"":
-                                    datosL.append(dato[1:len(dato)])
+    print("Ingresa el nombre del archivo (no escribas nada para salir): ",end="")
+    res = input()
+    while res != "":
+        with open(res) as archivo:
+            lineaAnterior = ""
+            for linea in archivo:
+                #Omite lineas vacias
+                datosL = []
+                datosLinea = linea.split(' ')
+                if lineaAnterior != datosLinea[0]:
+                    if esNumero(linea[0:2]): #Vefificar que sea una linea valida
+                        contador = 0
+                        #Saca la IP
+                        datosL.append(datosLinea[contador])
+                        for dato in datosLinea:
+                            #Omite lineas vacias
+                            if dato != "-" or contador == 0:
+                                if contador == 3:
+                                    #Saca la fecha
+                                    datosL.append(dato[1:12])
+                                    #Saca la hora
+                                    datosL.append(f"{dato[13:15]}:00:00")
+                                if contador == 5: # Obtiene el metodo
+                                    if dato != "\"-\"":
+                                        datosL.append(dato[1:len(dato)])
+                                    else:
+                                        datosL.append("NA")
+                                if contador == 10: #Obtiene la URL
+                                    if "localhost" not in dato:
+                                        datosL.append(dato) #URL
+                                        if "https://ingsoftware.reduaz.mx/moodle/login/index.php" == dato:
+                                            print(dato.find("id="))
+                                        datosL.append(dato[dato.find("id=")+3:dato.find("\" ")]) # ID
+                                        datosL.append(asignarCurso(datosL[len(datosL)-1])) # Nombre curso
+                                    else:
+                                        datosL.append("NA")
+                                        datosL.append("NA")
+                                        datosL.append("NA")
+                            contador+=1
+                        if len(datosL) > 4:
+                            if datosL[3] != "NA" and datosL[4] != "\"-\"" and datosL[6] != "NA":
+                                datosL.append(asignarSistema(linea)) # Sistema operativo
+                                if datosL[0][0:4] == "10.2":
+                                    datosL.append("Interna")
                                 else:
-                                    datosL.append("NA")
-                            if contador == 10: #Obtiene la URL
-                                if "localhost" not in dato:
-                                    datosL.append(dato) #URL
-                                    if "https://ingsoftware.reduaz.mx/moodle/login/index.php" == dato:
-                                        print(dato.find("id="))
-                                    datosL.append(dato[dato.find("id=")+3:dato.find("\" ")]) # ID
-                                    datosL.append(asignarCurso(datosL[len(datosL)-1])) # Nombre curso
-                                else:
-                                    datosL.append("NA")
-                                    datosL.append("NA")
-                                    datosL.append("NA")
-                        contador+=1
-                    if len(datosL) > 4:
-                        if datosL[3] != "NA" and datosL[4] != "\"-\"" and datosL[6] != "NA":
-                            datosL.append(asignarSistema(linea)) # Sistema operativo
-                            if datosL[0][0:4] == "10.2":
-                                datosL.append("Interna")
-                            else:
-                                datosL.append("Externa")
-                            datos.append(datosL)
-                    lineaAnterior = datosLinea[0]
-                
+                                    datosL.append("Externa")
+                                datos.append(datosL)
+                        lineaAnterior = datosLinea[0]
+        print("Ingresa el nombre del archivo (no escribas nada para salir): ",end="")
+        res = input()
     guardarDatos(datos,datos[0][1].replace("/","_",2))
 
 def asignarCurso(id):
