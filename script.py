@@ -22,7 +22,7 @@ def limpiar():
                                 #Saca la fecha
                                 datosL.append(dato[1:12])
                                 #Saca la hora
-                                datosL.append(dato[13:15])
+                                datosL.append(f"{dato[13:15]}:00:00")
                             if contador == 5: # Obtiene el metodo
                                 if dato != "\"-\"":
                                     datosL.append(dato[1:len(dato)])
