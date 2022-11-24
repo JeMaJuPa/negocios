@@ -22,7 +22,7 @@ def limpiar():
                                 #Saca la fecha
                                 datosL.append(dato[1:12])
                                 #Saca la hora
-                                datosL.append(dato[13:21])
+                                datosL.append(dato[13:15])
                             if contador == 5: # Obtiene el metodo
                                 if dato != "\"-\"":
                                     datosL.append(dato[1:len(dato)])
@@ -43,6 +43,10 @@ def limpiar():
                     if len(datosL) > 4:
                         if datosL[3] != "NA" and datosL[4] != "\"-\"" and datosL[6] != "NA":
                             datosL.append(asignarSistema(linea)) # Sistema operativo
+                            if datosL[0][0:4] == "10.2":
+                                datosL.append("Interna")
+                            else:
+                                datosL.append("Externa")
                             datos.append(datosL)
                     lineaAnterior = datosLinea[0]
                 
@@ -126,9 +130,11 @@ def guardarDatos(datos, nombre):
     limpio['G1'].font = Font(bold=True)
     limpio['H1'] = 'SISTEMA OPERATIVO'
     limpio['H1'].font = Font(bold=True)
+    limpio['I1'] = 'INTERNA / EXTERNA'
+    limpio['I1'].font = Font(bold=True)
     
     filas = 0
-    abc = "ABCDEFGH"
+    abc = "ABCDEFGHI"
     for fila in datos:
         columnas = 0
         for columna in fila:
